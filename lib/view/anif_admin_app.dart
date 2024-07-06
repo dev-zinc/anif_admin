@@ -61,15 +61,37 @@ class _HomeWidgetState extends State<HomeWidget> {
           Scaffold(
             backgroundColor: AnifColors.greyCC,
             body: Center(
-              child: _widgets[_selectedIndex],
+                child: _widgets[_selectedIndex],
             ),
-            bottomNavigationBar: BottomNavigationBar(
-              items: _bottomNavigationBarItems,
-              currentIndex: _selectedIndex,
-              selectedItemColor: AnifColors.grey33,
-              unselectedItemColor: AnifColors.grey78,
-              backgroundColor: AnifColors.greyF2,
-              onTap: _onItemTapped,
+            bottomNavigationBar: Container(
+              decoration: const BoxDecoration(
+                color: AnifColors.greyCC,
+                borderRadius: BorderRadius.only(
+                   topLeft: Radius.circular(30),
+                   topRight: Radius.circular(30),
+                ),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                      color: AnifColors.shadow,
+                      blurRadius: 0,
+                      offset: Offset(0, -4),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                child: BottomNavigationBar(
+                    items: _bottomNavigationBarItems,
+                    currentIndex: _selectedIndex,
+                    selectedItemColor: AnifColors.grey33,
+                    unselectedItemColor: AnifColors.grey78,
+                    backgroundColor: AnifColors.greyF2,
+                    onTap: _onItemTapped,
+                )
+              )
             ),
           )
         ],

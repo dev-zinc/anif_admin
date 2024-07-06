@@ -3,6 +3,7 @@ import 'package:anif_admin/lib/colors.dart';
 import 'package:anif_admin/lib/notification_type.dart';
 import 'package:anif_admin/view/notifications_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inner_shadow/flutter_inner_shadow.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -29,21 +30,31 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  Widget _createNotificationsButtonContainer() {
-    return Container(
+  Widget _createNotificationsButtonWidget() {
+    return SizedBox(
       height: 60,
-      color: Colors.transparent,
       child: Container(
-        margin: const EdgeInsets.all(10),
+        margin: const EdgeInsets.only(right: 10, top: 10),
         alignment: Alignment.bottomRight,
         child: Stack(
           alignment: Alignment.topRight,
           children: <Widget>[
-            IconButton(
-              onPressed: _onNotificationPressed,
-              icon: const Icon(
-                  Icons.notifications_none_outlined,
-                  size: 40
+            InnerShadow(
+              shadows: const [
+                Shadow(
+                    color: AnifColors.shadow,
+                    offset: Offset(4, 4),
+                    blurRadius: 4
+                )
+              ],
+              child: IconButton(
+                onPressed: _onNotificationPressed,
+                iconSize: 40,
+                color: AnifColors.grey78,
+                icon: const Icon(
+                    Icons.notifications_none_outlined,
+                    size: 40
+                )
               ),
             ),
             Visibility(
@@ -71,7 +82,7 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _createBriefNotifications() {
+  Widget _createBriefNotificationsWidget() {
     final mediaQuery = MediaQuery.of(context);
     return Container(
       alignment: Alignment.centerLeft,
@@ -165,36 +176,37 @@ class _HomeViewState extends State<HomeView> {
     final mediaQuery = MediaQuery.of(context);
 
     return Container(
-        alignment: Alignment.center,
-        margin: const EdgeInsets.only(left: 10, right: 10, top: 50),
-        width: mediaQuery.size.width * 0.9,
-        height: 200,
-        decoration: const BoxDecoration(
-            color: AnifColors.greyF2,
-            borderRadius: BorderRadius.all(Radius.circular(18)),
-            boxShadow: [
-              BoxShadow(
-                  color: AnifColors.shadow,
-                  blurRadius: 4,
-                  offset: Offset(4, 4)
-              )
-            ]
-        ),
-        child: Container()
+      alignment: Alignment.center,
+      margin: const EdgeInsets.only(left: 10, right: 10, top: 50),
+      width: mediaQuery.size.width * 0.9,
+      height: 200,
+      decoration: const BoxDecoration(
+        color: AnifColors.greyF2,
+        borderRadius: BorderRadius.all(Radius.circular(18)),
+        boxShadow: [
+          BoxShadow(
+              color: AnifColors.shadow,
+              blurRadius: 4,
+              offset: Offset(4, 4)
+          )
+        ]
+      ),
+      child: Container(
+
+        //TODO: 모니터링 화면 구현
+
+      )
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        color: AnifColors.greyF2,
-        child: Column(
-          children: <Widget>[
-            _createNotificationsButtonContainer(),
-            _createBriefNotifications(),
-            _createMoniteringWidget()
-          ],
-        )
-      );
+    return Column(
+      children: <Widget>[
+        _createNotificationsButtonWidget(),
+        _createBriefNotificationsWidget(),
+        _createMoniteringWidget()
+      ],
+    );
   }
 }

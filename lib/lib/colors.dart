@@ -11,7 +11,6 @@ class AnifColors {
     static const greyDD = Color(0xFFDDDDDD);
     static const greyE3 = Color(0xFFE3E3E3);
     static const greyF2 = Color(0xFFF2F2F2);
-    static const greyFF = Color(0xFFFFFFFF);
 
     static const shadow = Color(0x33000000);
 
