@@ -17,8 +17,14 @@ class _NotificationsViewState extends State<NotificationsView> {
     Navigator.pop(context);
   }
 
+  void _onDropdownChanged(String? value) {
+
+  }
+
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+
     return Scaffold(
       backgroundColor: AnifColors.greyF2,
       body: Column(
@@ -62,8 +68,25 @@ class _NotificationsViewState extends State<NotificationsView> {
             ),
           ),
           // 알림 목록
-          ListView(
+          Container(
+            margin: const EdgeInsets.only(left: 20),
+            child: const DropdownMenu(
+              dropdownMenuEntries: [],
 
+            )
+          ),
+          SizedBox(
+            width: mediaQuery.size.width,
+            height: mediaQuery.size.height * 0.7,
+            child: ListView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: 10,
+              itemBuilder: (BuildContext context, int index) => Container(
+                  width: 100,
+                  height: 100,
+                  child: Text("알림 $index"),
+              ),
+            )
           )
         ]
       ),
