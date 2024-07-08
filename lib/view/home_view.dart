@@ -102,7 +102,7 @@ class _HomeViewState extends State<HomeView> {
                 BoxShadow(
                     color: AnifColors.shadow,
                     blurRadius: 4,
-                    offset: Offset(4, 4)
+                    offset: Offset(2, 2)
                 )
               ],
             ),
@@ -119,7 +119,6 @@ class _HomeViewState extends State<HomeView> {
           // 각 항목별 개수
           Container(
             width: mediaQuery.size.width * 0.8,
-            height: 184,
             decoration: const BoxDecoration(
               boxShadow: [
                 BoxShadow(
