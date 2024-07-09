@@ -1,6 +1,8 @@
 
+import 'package:anif_admin/domain/user.dart';
 import 'package:anif_admin/lib/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class UserDetailedView extends StatefulWidget {
   const UserDetailedView({super.key});
@@ -10,12 +12,15 @@ class UserDetailedView extends StatefulWidget {
 }
 
 class _UserDetailedViewState extends State<UserDetailedView> {
+
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User>(context);
     return Scaffold(
       backgroundColor: AnifColors.greyF2,
       body: Column(
         children: [
+          Text(user.name),
           Container(
             margin: const EdgeInsets.only(top: 40, left: 20, right: 20),
             height: 60,

@@ -1,10 +1,12 @@
 import 'package:anif_admin/domain/user.dart';
 import 'package:anif_admin/lib/colors.dart';
+import 'package:anif_admin/view/user_detailed_view.dart';
 import 'package:flutter/material.dart';
 
 import 'package:anif_admin/lib/keyboard_subscription.dart';
 
 import 'package:anif_admin/lib/head.dart';
+import 'package:provider/provider.dart';
 
 class UserManageView extends StatefulWidget {
   const UserManageView({super.key});
@@ -13,7 +15,8 @@ class UserManageView extends StatefulWidget {
   State<StatefulWidget> createState() => _UserManageViewState();
 }
 
-class _UserManageViewState extends State<UserManageView> with KeyboardSubscription {
+class _UserManageViewState extends State<UserManageView>
+    with KeyboardSubscription {
   final UserViewModel _userViewModel = UserViewModel();
 
   @override
@@ -32,6 +35,18 @@ class _UserManageViewState extends State<UserManageView> with KeyboardSubscripti
     super.dispose();
   }
 
+  void _onTabUser(User user) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) =>
+          ChangeNotifierProvider(
+            create: (BuildContext context) => user,
+            builder: (context, child) => const UserDetailedView()
+          )
+      )
+    );
+  }
+
   void _onLeaveFocus() {
     FocusManager.instance.primaryFocus?.unfocus();
   }
@@ -42,13 +57,12 @@ class _UserManageViewState extends State<UserManageView> with KeyboardSubscripti
 
     return Stack(children: [
       Theme(
-        data: Theme.of(context).copyWith(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-        ),
-        child: _createUserList(onlineUsers)
-      ),
-      _createListHeader(users: onlineUsers, title: "온라인")
+          data: Theme.of(context).copyWith(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+          ),
+          child: _createUserList(onlineUsers)),
+      _createListHeader(users: onlineUsers, isOnline: true)
     ]);
   }
 
@@ -58,18 +72,17 @@ class _UserManageViewState extends State<UserManageView> with KeyboardSubscripti
 
     return Stack(children: [
       Theme(
-        data: Theme.of(context).copyWith(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-        ),
-        child: _createUserList(offlineUsers)
-      ),
-      _createListHeader(users: offlineUsers, title: "오프라인")
-      ]
-    );
+          data: Theme.of(context).copyWith(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+          ),
+          child: _createUserList(offlineUsers)),
+      _createListHeader(users: offlineUsers, isOnline: false)
+    ]);
   }
 
-  Widget _createListHeader({required List<User> users, required String title}) {
+  Widget _createListHeader(
+      {required List<User> users, required bool isOnline}) {
     return Container(
         margin: const EdgeInsets.symmetric(horizontal: 20),
         padding: const EdgeInsets.symmetric(vertical: 4),
@@ -86,9 +99,14 @@ class _UserManageViewState extends State<UserManageView> with KeyboardSubscripti
                     height: 15,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(90),
-                        color: AnifColors.grey88,
-                        border:
-                        Border.all(color: AnifColors.greyDD, width: 1),
+                        color: isOnline
+                            ? AnifGreenColors.green
+                            : AnifColors.grey88,
+                        border: Border.all(
+                            color: isOnline
+                                ? AnifGreenColors.greenStroke
+                                : AnifColors.greyDD,
+                            width: 1),
                         boxShadow: const [
                           BoxShadow(
                             color: AnifColors.shadow,
@@ -98,7 +116,7 @@ class _UserManageViewState extends State<UserManageView> with KeyboardSubscripti
                         ])),
                 Container(
                     margin: const EdgeInsets.only(left: 5, bottom: 3),
-                    child: Text(title,
+                    child: Text(isOnline ? '온라인' : '오프라인',
                         style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.normal,
@@ -121,7 +139,8 @@ class _UserManageViewState extends State<UserManageView> with KeyboardSubscripti
   Widget _createUserList(List<User> users) {
     return ExpansionTile(
       initiallyExpanded: true,
-      visualDensity: const VisualDensity(vertical: VisualDensity.minimumDensity),
+      visualDensity:
+          const VisualDensity(vertical: VisualDensity.minimumDensity),
       dense: true,
       shape: const RoundedRectangleBorder(),
       tilePadding: const EdgeInsets.symmetric(horizontal: 20),
@@ -129,40 +148,46 @@ class _UserManageViewState extends State<UserManageView> with KeyboardSubscripti
       collapsedBackgroundColor: AnifColors.greyF2,
       backgroundColor: AnifColors.greyF2,
       title: const Text(" "),
-      children: users.map((user) => Container(
-        margin: const EdgeInsets.only(left: 40, right: 40, top: 2, bottom: 2),
-        child: Row(
-          children: [
-            FutureBuilder(
-                future: user.createHeadImage(45),
-                builder: getLoadingBoxBuilder(size: 45)),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                    margin: const EdgeInsets.only(left: 6),
-                    alignment: Alignment.centerLeft,
-                    child: Text(user.name,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: AnifColors.grey44,
-                        ))),
-                Container(
-                    margin: const EdgeInsets.only(left: 6),
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                        user.islandName == null
-                            ? "섬 없음"
-                            : '${user.islandName} 소속',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AnifColors.grey88,
-                        )))
-              ],
-            )
-          ],
-        ),
-      )).toList(),
+      children: users
+          .map((user) => InkWell(
+              enableFeedback: false,
+              onTap: () => _onTabUser(user),
+              child: Container(
+                margin: const EdgeInsets.only(
+                    left: 40, right: 40, top: 2, bottom: 2),
+                child: Row(
+                  children: [
+                    FutureBuilder(
+                        future: user.createHeadImage(45),
+                        builder: getLoadingBoxBuilder(size: 45)),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                            margin: const EdgeInsets.only(left: 6),
+                            alignment: Alignment.centerLeft,
+                            child: Text(user.name,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: AnifColors.grey44,
+                                ))),
+                        Container(
+                            margin: const EdgeInsets.only(left: 6),
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                                user.islandName == null
+                                    ? "섬 없음"
+                                    : '${user.islandName} 소속',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: AnifColors.grey88,
+                                )))
+                      ],
+                    )
+                  ],
+                ),
+              )))
+          .toList(),
     );
   }
 
@@ -231,11 +256,10 @@ class _UserManageViewState extends State<UserManageView> with KeyboardSubscripti
                       enableFeedback: false,
                       iconSize: 40,
                       icon: const Icon(Icons.arrow_upward),
-                      onPressed: () => PrimaryScrollController.of(context).animateTo(
-                        0,
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeInOut
-                      ),
+                      onPressed: () => PrimaryScrollController.of(context)
+                          .animateTo(0,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.easeInOut),
                     )))
           ]))
         ],
