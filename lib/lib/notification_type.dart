@@ -1,16 +1,44 @@
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+
+import 'colors.dart';
+
 enum NotificationType {
   reportingBugOrIssue("버그 및 오류 제보"),
   suggestion("건의사항"),
   reportingUser("유저 신고"),
   inquiry("문의사항"),
-  others("기타");
+  others("기타"),
+  solved("해결됨");
 
-  final _displayName;
+  final String _displayName;
+
+  String get displayName => _displayName;
 
   const NotificationType(String displayName) : _displayName = displayName;
 
-  String get displayName => _displayName;
+  Widget createTypeBadge() => Container(
+    margin: const EdgeInsets.only(top: 10, bottom: 10, right: 5),
+    padding: const EdgeInsets.symmetric(horizontal: 5),
+    decoration: BoxDecoration(
+      color: AnifColors.greyF2,
+      border: Border.all(
+          color: this != solved ? AnifColors.greyAA : AnifBlueColors.blueStroke,
+          width: 2
+      ),
+      borderRadius: BorderRadius.circular(90)
+    ),
+    child: Text(
+      displayName,
+      softWrap: true,
+      style: TextStyle(
+          fontSize: 9,
+          color: this != solved ? AnifColors.grey66 : AnifBlueColors.blueText,
+          fontWeight: FontWeight.bold
+      )
+    ),
+  );
 }
 
 class NotificationCounter {
@@ -19,7 +47,7 @@ class NotificationCounter {
     NotificationType.suggestion: 0,
     NotificationType.reportingUser: 0,
     NotificationType.inquiry: 0,
-    NotificationType.others: 0
+    NotificationType.others: 0,
   };
 
   int total() {

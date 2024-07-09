@@ -1,4 +1,5 @@
 
+import 'package:anif_admin/domain/notification.dart';
 import 'package:anif_admin/lib/colors.dart';
 import 'package:anif_admin/lib/notification_type.dart';
 import 'package:anif_admin/view/notifications_view.dart';
@@ -13,8 +14,9 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  bool _hasNewNotifications = true;
+  final NotificationViewModel _notificationViewModel = NotificationViewModel();
   final _notificationCounter = NotificationCounter();
+  bool _hasNewNotifications = true;
 
   void useCounter(Function(NotificationCounter counter) consumer) {
     setState(() => consumer(_notificationCounter));
@@ -26,7 +28,7 @@ class _HomeViewState extends State<HomeView> {
         MaterialPageRoute(builder: (context) => const NotificationsView())
     );
     if(_hasNewNotifications) {
-      setState(() => _hasNewNotifications = false);
+        setState(() => _hasNewNotifications = false);
     }
   }
 
@@ -136,33 +138,35 @@ class _HomeViewState extends State<HomeView> {
             child: Container(
               margin: const EdgeInsets.only(left: 20, top: 3, bottom: 3, right: 20),
               child: Column(
-                children: NotificationType.values.map((type) => Container(
-                  margin: const EdgeInsets.only(top: 3, bottom: 3),
-                  // alignment: Alignment.centerLeft,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        type.displayName,
-                        textAlign: TextAlign.left,
-                        style: const TextStyle(
-                            color: AnifColors.grey44,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold
-                        ),
-                      ),
-                      Text(
-                        "${_notificationCounter.get(type)}",
-                        textAlign: TextAlign.right,
-                        style: const TextStyle(
-                            color: AnifColors.grey44,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold
-                        ),
+                children: NotificationType.values
+                    .where((type) => type != NotificationType.solved)
+                    .map((type) => Container(
+                      margin: const EdgeInsets.only(top: 3, bottom: 3),
+                      // alignment: Alignment.centerLeft,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            type.displayName,
+                            textAlign: TextAlign.left,
+                            style: const TextStyle(
+                                color: AnifColors.grey44,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
+                            ),
+                          ),
+                          Text(
+                            "${_notificationCounter.get(type)}",
+                            textAlign: TextAlign.right,
+                            style: const TextStyle(
+                                color: AnifColors.grey44,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold
+                            ),
+                          )
+                        ]
                       )
-                    ]
-                  )
-                )).toList(),
+                    )).toList(),
               )
             ),
           ),

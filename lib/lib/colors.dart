@@ -17,6 +17,11 @@ class AnifColors {
     static const red = Color(0xFFE01D1D);
 }
 
+class AnifGreenColors {
+    static const green = Color(0xFF1FD226);
+    static const greenStroke = Color(0xFFC4FFC6);
+}
+
 class AnifBlueColors {
     static const blueText = Color(0xFF2F91C8);
     static const blueStroke = Color(0xFF4DABDF);

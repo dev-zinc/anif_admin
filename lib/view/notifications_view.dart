@@ -1,5 +1,6 @@
 
 import 'package:anif_admin/domain/notification.dart' as domain;
+import 'package:anif_admin/lib/head.dart';
 import 'package:anif_admin/lib/notification_type.dart';
 import 'package:anif_admin/lib/time.dart';
 import 'package:flutter/material.dart';
@@ -116,9 +117,7 @@ class _NotificationsViewState extends State<NotificationsView> {
               )).toList(),
             )
           ),
-          SizedBox(
-            width: mediaQuery.size.width,
-            height: mediaQuery.size.height - 100,
+          Expanded(
             child: Container(
               child: notifications.isEmpty
                 ? const Align(
@@ -136,6 +135,8 @@ class _NotificationsViewState extends State<NotificationsView> {
                   itemCount: notifications.length,
                   itemBuilder: (BuildContext context, int index) {
                     var notification = notifications[index];
+                    var notificationTypes = notification.notificationTypes
+                        ..sort((a, b) => a.displayName.compareTo(b.displayName));
                     return Container(
                       width: mediaQuery.size.width,
                       // height: 70,
@@ -153,17 +154,7 @@ class _NotificationsViewState extends State<NotificationsView> {
                                     children: [
                                       FutureBuilder(
                                         future: notification.user.createHeadImage(24),
-                                        builder: (context, snapshot) {
-                                          final loadingBox = Container(
-                                              width: 24,
-                                              height: 24,
-                                              color: AnifColors.grey44
-                                          );
-                                          if(snapshot.connectionState != ConnectionState.done) {
-                                            return loadingBox;
-                                          }
-                                          return snapshot.hasData ? snapshot.data! : loadingBox;
-                                        }
+                                        builder: getLoadingBoxBuilder(size: 24)
                                       ),
                                       Container(
                                         margin: const EdgeInsets.only(left: 6),
@@ -190,30 +181,9 @@ class _NotificationsViewState extends State<NotificationsView> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Row(
-                                    children: notification.notificationTypes.map((type) {
-                                      return Container(
-                                        margin: const EdgeInsets.only(top: 10, bottom: 10, right: 5),
-                                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                                        decoration: BoxDecoration(
-                                          color: AnifColors.greyF2,
-                                          border: Border.all(
-                                              color: AnifColors.greyAA,
-                                              width: 2
-                                          ),
-                                          borderRadius: BorderRadius.circular(90)
-                                        ),
-                                        child: Text(
-                                          type.displayName,
-                                          softWrap: true,
-                                          style: const TextStyle(
-                                              fontSize: 9,
-                                              color: AnifColors.grey66,
-                                              fontWeight: FontWeight.bold
-                                          )
-                                        ),
-                                      );
-                                    }).toList()
+                                  Row(children: notificationTypes
+                                      .map((type) => type.createTypeBadge())
+                                      .toList()
                                   ),
                                   Container(
                                     margin: const EdgeInsets.only(top: 10),

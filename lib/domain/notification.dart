@@ -6,13 +6,13 @@ import 'package:anif_admin/lib/notification_type.dart';
 
 class Notification {
   final User _user;
-  final Set<NotificationType> _notificationTypes;
+  final List<NotificationType> _notificationTypes;
   final String _title;
   final DateTime _createdDateTime;
   bool _isRead = false;
 
   User get user => _user;
-  Set<NotificationType> get notificationTypes => _notificationTypes;
+  List<NotificationType> get notificationTypes => _notificationTypes;
   String get title => _title;
   DateTime get createdDateTime => _createdDateTime;
   bool get isRead => _isRead;
@@ -24,6 +24,10 @@ class Notification {
     this._createdDateTime,
     this._isRead
   );
+
+  bool isSolved() {
+    return _notificationTypes.contains(NotificationType.solved);
+  }
 
   void read() {
     _isRead = true;
@@ -43,11 +47,12 @@ class NotificationViewModel {
     for (var i = 0; i < 30; i++) {
       _notifications.add(
         Notification(
-          User('Doiche'),
-          {
-              NotificationType.values[Random().nextInt(5)],
-              NotificationType.values[Random().nextInt(5)]
-          },
+          User('Doiche', true, 'Doiche\'s Island'),
+          [
+            NotificationType.values[Random().nextInt(6)],
+            NotificationType.values[Random().nextInt(6)],
+            NotificationType.values[Random().nextInt(6)]
+          ],
           'test',
           DateTime.now().subtract(const Duration(hours: 3)),
           false
