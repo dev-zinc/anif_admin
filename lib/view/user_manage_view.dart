@@ -1,5 +1,5 @@
-import 'package:anif_admin/domain/user.dart';
 import 'package:anif_admin/lib/colors.dart';
+import 'package:anif_admin/model/user/user.dart';
 import 'package:anif_admin/view/user_detailed_view.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +7,8 @@ import 'package:anif_admin/lib/keyboard_subscription.dart';
 
 import 'package:anif_admin/lib/head.dart';
 import 'package:provider/provider.dart';
+
+import '../viewmodel/user_view_model.dart';
 
 class UserManageView extends StatefulWidget {
   const UserManageView({super.key});
@@ -37,47 +39,38 @@ class _UserManageViewState extends State<UserManageView>
 
   void _onTabUser(User user) {
     Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) =>
-          ChangeNotifierProvider(
-            create: (BuildContext context) => user,
-            builder: (context, child) => const UserDetailedView()
-          )
-      )
-    );
+        context,
+        MaterialPageRoute(
+            builder: (context) => Provider(
+                create: (BuildContext context) => User.clone(user),
+                builder: (context, child) => const UserDetailedView())));
   }
 
   void _onLeaveFocus() {
     FocusManager.instance.primaryFocus?.unfocus();
   }
 
-  Widget createOnlineUserList() {
-    final onlineUsers =
-        _userViewModel.users.where((user) => user.isOnline).toList();
-
+  Widget createOnlineUserList(List<User> users) {
     return Stack(children: [
       Theme(
           data: Theme.of(context).copyWith(
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
           ),
-          child: _createUserList(onlineUsers)),
-      _createListHeader(users: onlineUsers, isOnline: true)
+          child: _createUserList(users)),
+      _createListHeader(users: users, isOnline: true)
     ]);
   }
 
-  Widget createOfflineUserList() {
-    final offlineUsers =
-        _userViewModel.users.where((user) => !user.isOnline).toList();
-
+  Widget createOfflineUserList(List<User> users) {
     return Stack(children: [
       Theme(
           data: Theme.of(context).copyWith(
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
           ),
-          child: _createUserList(offlineUsers)),
-      _createListHeader(users: offlineUsers, isOnline: false)
+          child: _createUserList(users)),
+      _createListHeader(users: users, isOnline: false)
     ]);
   }
 
@@ -158,6 +151,8 @@ class _UserManageViewState extends State<UserManageView>
                 child: Row(
                   children: [
                     FutureBuilder(
+                        initialData: Container(
+                            width: 24, height: 24, color: AnifColors.grey44),
                         future: user.createHeadImage(45),
                         builder: getLoadingBoxBuilder(size: 45)),
                     Column(
@@ -220,48 +215,64 @@ class _UserManageViewState extends State<UserManageView>
                     size: 30,
                   )),
               constraints: const BoxConstraints(maxHeight: 50)),
-          Expanded(
-              child: Stack(children: [
-            Container(
-                margin: const EdgeInsets.only(top: 5),
-                child: ListView(children: [
-                  createOnlineUserList(),
+          FutureBuilder(
+              future: _userViewModel.fetchUserList(),
+              builder: (context, snapshot) {
+                final List<User> userList;
+
+                if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.hasData) {
+                  userList = snapshot.data!;
+                } else {
+                  return Container();
+                }
+
+                return Expanded(
+                    child: Stack(children: [
                   Container(
-                      margin: const EdgeInsets.only(top: 2, bottom: 200),
-                      child: createOfflineUserList())
-                ])),
-            Positioned(
-                right: 0,
-                bottom: 70,
-                child: Container(
-                    decoration: const BoxDecoration(
-                        color: AnifColors.greyF2,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          bottomLeft: Radius.circular(30),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AnifColors.shadow,
-                            blurRadius: 4,
-                            offset: Offset(4, 0),
-                          ),
-                          BoxShadow(
-                            color: AnifColors.shadow,
-                            blurRadius: 4,
-                            offset: Offset(-4, 0),
-                          )
-                        ]),
-                    child: IconButton(
-                      enableFeedback: false,
-                      iconSize: 40,
-                      icon: const Icon(Icons.arrow_upward),
-                      onPressed: () => PrimaryScrollController.of(context)
-                          .animateTo(0,
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeInOut),
-                    )))
-          ]))
+                      margin: const EdgeInsets.only(top: 5),
+                      child: ListView(children: [
+                        createOnlineUserList(
+                            userList.where((user) => user.isOnline).toList()),
+                        Container(
+                            margin: const EdgeInsets.only(top: 2, bottom: 200),
+                            child: createOfflineUserList(userList
+                                .where((user) => !user.isOnline)
+                                .toList()))
+                      ])),
+                  Positioned(
+                      right: 0,
+                      bottom: 70,
+                      child: Container(
+                          decoration: const BoxDecoration(
+                              color: AnifColors.greyF2,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(30),
+                                bottomLeft: Radius.circular(30),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AnifColors.shadow,
+                                  blurRadius: 4,
+                                  offset: Offset(4, 0),
+                                ),
+                                BoxShadow(
+                                  color: AnifColors.shadow,
+                                  blurRadius: 4,
+                                  offset: Offset(-4, 0),
+                                )
+                              ]),
+                          child: IconButton(
+                            enableFeedback: false,
+                            iconSize: 40,
+                            icon: const Icon(Icons.arrow_upward),
+                            onPressed: () => PrimaryScrollController.of(context)
+                                .animateTo(0,
+                                    duration: const Duration(milliseconds: 500),
+                                    curve: Curves.easeInOut),
+                          )))
+                ]));
+              }),
         ],
       ),
     );

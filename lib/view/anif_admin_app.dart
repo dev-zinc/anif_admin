@@ -90,7 +90,7 @@ class _HomeWidgetState extends State<HomeWidget> with KeyboardSubscription {
                         boxShadow: <BoxShadow>[
                           BoxShadow(
                               color: AnifColors.shadow,
-                              blurRadius: 0,
+                              blurRadius: 4,
                               offset: Offset(0, -4),
                           ),
                         ],

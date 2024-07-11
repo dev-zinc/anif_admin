@@ -1,10 +1,12 @@
 
+import 'package:anif_admin/lib/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-import 'colors.dart';
-
+@JsonEnum(fieldRename: FieldRename.screamingSnake)
 enum NotificationType {
+  all("전체"),
   reportingBugOrIssue("버그 및 오류 제보"),
   suggestion("건의사항"),
   reportingUser("유저 신고"),
