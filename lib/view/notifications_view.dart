@@ -120,7 +120,7 @@ class _NotificationsViewState extends State<NotificationsView> {
                                   sharedPreference =
                                       snapshot.data as SharedPreferences;
                                 } else {
-                                  return const CircularProgressIndicator();
+                                  return Container();
                                 }
 
                                 return ListView.builder(
