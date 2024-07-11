@@ -109,7 +109,10 @@ class _HomeViewState extends State<HomeView> {
                         ],
                       ),
                       alignment: Alignment.center,
-                      child: Text("미해결 ${notifications.length}",
+                      child: Text(
+                          "미해결 ${notifications
+                              .where((notification) => !notification.notificationTypes.contains(NotificationType.solved))
+                              .length}",
                           style: const TextStyle(
                               color: AnifBlueColors.blueText,
                               fontSize: 15,
@@ -155,7 +158,9 @@ class _HomeViewState extends State<HomeView> {
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           Text(
-                                            "${notifications.where((notification) => notification.notificationTypes.contains(type)).length}",
+                                            "${notifications.where((notification) =>
+                                                !notification.notificationTypes.contains(NotificationType.solved)
+                                                    && notification.notificationTypes.contains(type)).length}",
                                             textAlign: TextAlign.right,
                                             style: const TextStyle(
                                                 color: AnifColors.grey44,
